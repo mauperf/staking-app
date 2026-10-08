@@ -4,7 +4,7 @@ pragma solidity 0.8.37;
 
 import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {Test} from "forge-std/Test.sol";
+import {Test} from "../lib/forge-std/src/Test.sol";
 import {StakedEther} from "../src/StakedEther.sol";
 
 contract TestStakedEther is Test {
@@ -12,6 +12,7 @@ contract TestStakedEther is Test {
 
     address deployer = vm.addr(1);
     address user = vm.addr(2);
+    address user2 = vm.addr(3);
 
     function setUp() external {
         vm.prank(deployer);
@@ -57,6 +58,14 @@ contract TestStakedEther is Test {
         uint256 _amount = 1 * 10**18;
         vm.prank(deployer);
         stkEther.burn(user, _amount);
+    }
+
+    function testRevertTransfer_NonTransferable() public {
+        mintTokens();
+        uint256 _amount = 1 * 10**18;
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSelector(StakedEther.NonTransferable.selector));
+        stkEther.transfer(user2, _amount);
     }
 
 

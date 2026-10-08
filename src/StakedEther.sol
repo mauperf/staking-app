@@ -7,6 +7,8 @@ import {Ownable} from "../lib/openzeppelin-contracts/contracts/access/Ownable.so
 
 contract StakedEther is ERC20, Ownable {
 
+    error NonTransferable();
+
     constructor() ERC20("Staked Ether", "stkETH") Ownable(msg.sender) {}
 
     function mint(address _to, uint256 _amount) external onlyOwner {
@@ -16,4 +18,10 @@ contract StakedEther is ERC20, Ownable {
     function burn(address _from, uint256 _amount) external onlyOwner {
         _burn(_from, _amount);
     }
+
+    function _update(address _from, address _to, uint256 _value) internal override {
+        if (_from != address(0) && _to != address(0)) revert NonTransferable();
+        super._update(_from, _to, _value);
+    }
+
 }
