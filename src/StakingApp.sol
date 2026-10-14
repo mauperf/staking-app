@@ -56,8 +56,11 @@ contract StakingApp is Ownable, Pausable {
         _;
     }
 
-    constructor() Ownable(msg.sender) {
+    constructor(address _rewardToken, uint256 _rewardsRate) Ownable(msg.sender) {
+        if (_rewardToken == address(0)) revert InvalidAddress();
         stkEther = new StakedEther();
+        rewardToken = _rewardToken;
+        rewardsRate = _rewardsRate;
     }
 
     function rewardPerToken() public view returns (uint256) {
